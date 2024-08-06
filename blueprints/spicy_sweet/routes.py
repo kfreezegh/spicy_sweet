@@ -45,8 +45,10 @@ def home():
         if request.method == 'GET':
             # TOTAL DE VENTAS
             totalVentas = db.session.query(func.round(func.sum(historial.monto), 2)).filter(historial.tipo == 'venta', historial.fecha >= datetime.now() - timedelta(days=30)).scalar()
+            totalVentas = totalVentas if totalVentas is not None else 0.0
             # TOTAL DE INVERSIÓN
             totalInversion = db.session.query(func.round(func.sum(historial.monto), 2)).filter(historial.tipo == 'inversion', historial.fecha >= datetime.now() - timedelta(days=30)).scalar()
+            totalInversion = totalInversion if totalInversion is not None else 0.0
             # TOTAL DE GANANCIAS
             totalGanancias = round(totalVentas - totalInversion, 2)
             # MÁS VENDIDOS
