@@ -1,0 +1,23 @@
+body {
+    background: #ffffff;
+  }
+
+  .custom-btn {
+    background-color: #c13641; 
+    color: #FFFFFF; 
+    font-weight: bold; 
+    border: none; 
+    border-radius: 5px;
+    padding: 12px 20px;
+    cursor: pointer; 
+    transition: background-color 0.3s ease;
+  }
+
+.custom-btn:hover {
+  background-color: #a82c37;
+}
+
+.custom-img {
+  max-width: 45%;
+  height: auto;
+}

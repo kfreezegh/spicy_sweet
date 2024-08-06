@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Spicy Sweet - Sidebar{% endblock %}</title>
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('spicy_sweet.static', filename='img/logo-modified.png') }}" type="image/x-icon">
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('spicy_sweet.static', filename='css/sidebar.css') }}">
+</head>
+
+<body>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="sidebar" class="col-1 bg-light sidebar d-flex flex-column align-items-center">
+                <!-- Contenido del sidebar -->
+                <ul class="nav flex-column text-center">
+                    <li class="nav-item mb-4">
+                        <a class="nav-link" href="{{ url_for('spicy_sweet.home') }}">
+                            <i class="fas fa-house fa-animate-bounce"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item mb-4">
+                        <a class="nav-link" href="{{ url_for('spicy_sweet.productos') }}">
+                            <i class="fas fa-boxes-packing fa-animate-bounce"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item mb-4">
+                        <a class="nav-link" href="{{ url_for('spicy_sweet.ingredientes') }}">
+                            <i class="fas fa-pepper-hot fa-animate-bounce"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item mb-4">
+                        <a class="nav-link" href="{{ url_for('spicy_sweet.varios') }}">
+                            <i class="fas fa-cubes-stacked fa-animate-bounce"></i>
+                        </a>
+                    </li>
+                </ul>
+                <div class="nav-item mb-2 mt-auto text-center">
+                    <a class="nav-link" href="{{ url_for('spicy_sweet.logout') }}">
+                        <i class="fas fa-right-from-bracket fa-animate-bounce"></i>
+                    </a>
+                </div>
+            </nav>
+            
+            <!-- Contenido principal -->
+            <main id="content" class="col-11">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+</body>
+
+</html>

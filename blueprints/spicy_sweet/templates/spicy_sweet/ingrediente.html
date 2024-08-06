@@ -1,0 +1,223 @@
+{% extends "spicy_sweet/sidebar.html" %}
+
+{% block title %}Spicy Sweet - Ingredientes{% endblock %}
+
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('spicy_sweet.static', filename='css/table.css') }}">
+</head>
+
+<body>
+
+    <div class="container mt-5">
+        <h2 class="mb-5 text-center">Inventario de ingredientes</h2>
+
+        <div class="row justify-content-center mb-5">
+            <button id="btnAgregarRegistro" class="btn custom-btn d-flex align-items-center">
+                <i class="fa-regular fa-square-plus mr-2"></i>
+                Agregar ingrediente
+            </button>
+        </div>
+
+        <!-- STOCK BAJO -->
+        {% if stock_bajo %}
+        <div class="alert alert-danger" role="alert">
+            <h4 class="alert-heading">¡Atención!</h4>
+            <p>Algunos productos tienen un stock bajo, te recomendamos revisarlos.</p>
+            <hr>
+            <p class="mb-0">Productos con stock bajo:</p>
+            <ul>
+                {% for producto in stock_bajo %}
+                <li>{{ producto.nombre }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        
+        <!-- AGREGAR REGISTRO -->
+        <div class="modal fade" id="modalAgregarRegistro" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Agregar ingrediente</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formAgregarRegistro">
+                            <!-- Campos del formulario -->
+                            <div class="form-group">
+                                <label for="nombre">Nombre:</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre">
+                            </div>
+                            <div class="form-group">
+                                <label for="precio">Precio de compra:</label>
+                                <input type="number" class="form-control" id="precio" name="precio" min="0" oninput="this.value = Math.abs(this.value)">
+                            </div>
+                            <div class="form-group">
+                                <label for="descripcion">Descripción:</label>
+                                <textarea class="form-control" id="descripcion" name="descripcion" rows="3"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" onclick="guardarAñadirRegistro()">Guardar
+                            Producto</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Cantidad</th>
+                    <th>Precio de compra</th>
+                    <th>Descripción</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for registro in registros %}
+                <tr>
+                    <td>{{ registro.nombre }}</td>
+                    <td>{{ registro.existencias }}</td>
+                    <td>{{ registro.costo}} MXN</td>
+                    <td>{{ registro.descripcion }}</td>
+                    <td>
+                        <button class="btnActualizarExistencias btn custom-btn" data-nombre="{{ registro.nombre }}">
+                            <i class="fa-solid fa-calculator"></i>
+                        </button>
+
+                        <button class="btnEditarInfo btn custom-btn" data-nombre="{{ registro.nombre }}"
+                            data-precio="{{ registro.costo }}" data-descripcion="{{ registro.descripcion }}">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+
+                        <button class="btnEliminarRegistro btn custom-btn" data-nombre="{{ registro.nombre }}">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ACTUALIZAR EXISTENCIAS -->
+    <div class="modal fade" id="modalActualizarExistencias" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Actualizar existencias</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formActualizarExistencias">
+                        <!-- Campos del formulario -->
+                        <div class="form-group">
+                            <label for="entradas">Entradas:</label>
+                            <input type="number" class="form-control" id="entradas" name="entradas" min="0" oninput="this.value = Math.abs(this.value)">
+                        </div>
+                        <div class="form-group">
+                            <label for="salidas">Salidas:</label>
+                            <input type="number" class="form-control" id="salidas" name="salidas" min="0" oninput="this.value = Math.abs(this.value)">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" onclick="guardarActualizarExistencias()">Guardar
+                        Producto</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- EDITAR INFO -->
+    <div class="modal fade" id="modalEditarInfo" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Editar información</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEditarInfo">
+                        <div class="form-group">
+
+                            <label for="editarNombre">Nombre:</label>
+                            <input type="text" class="form-control" id="editarNombre" name="editarNombre">
+
+                            <label for="editarPrecio">Precio de compra:</label>
+                            <input type="number" class="form-control" id="editarPrecio" name="editarPrecio" min="0" oninput="this.value = Math.abs(this.value)">
+
+                            <label for="editarDescripcion">Descripción:</label>
+                            <textarea class="form-control" id="editarDescripcion" name="editarDescripcion"
+                                rows="3"></textarea>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" onclick="guardarEditarInfo()">Guardar
+                        cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ELIMINAR REGISTRO DE INGREDIENTE/PRODUCTO/VARIOS -->
+    <div class="modal fade" id="modalEliminarRegistro" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">¿Deseas eliminar este registro?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEliminarRegistro">
+                        <div class="form-group">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" onclick="guardarEliminarRegistro()">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS, Popper.js, and jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('spicy_sweet.static', filename='js/ingrediente.js') }}"></script>
+
+</body>
+
+</html>
+
+{% endblock %}

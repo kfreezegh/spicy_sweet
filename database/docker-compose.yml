@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:latest
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: spicy_sweet_db
+    ports:
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - ./scripts:/docker-entrypoint-initdb.d
